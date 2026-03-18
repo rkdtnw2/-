@@ -21,7 +21,6 @@
       --shadow-hover: 0 16px 40px rgba(15, 23, 42, 0.14);
       --radius-xl: 28px;
       --radius-lg: 22px;
-      --radius-md: 16px;
       --max-width: 1200px;
     }
 
@@ -110,7 +109,6 @@
       padding: 8px 14px;
       font-size: 13px;
       font-weight: 700;
-      letter-spacing: 0.2px;
       margin-bottom: 16px;
       backdrop-filter: blur(6px);
     }
@@ -192,7 +190,6 @@
       margin: 0 0 10px;
       font-size: 24px;
       font-weight: 800;
-      letter-spacing: -0.02em;
     }
 
     .home-card-desc {
@@ -215,7 +212,6 @@
       margin: 0;
       font-size: 32px;
       font-weight: 800;
-      letter-spacing: -0.03em;
     }
 
     .section-sub {
@@ -416,7 +412,6 @@
       font-size: 19px;
       font-weight: 800;
       line-height: 1.4;
-      letter-spacing: -0.02em;
       word-break: keep-all;
     }
 
@@ -570,9 +565,7 @@
           </div>
           <div class="home-card-body">
             <h2 class="home-card-title">SOP 매뉴얼</h2>
-            <p class="home-card-desc">
-              첫인사, 상담 흐름, 마무리 응대 등 현장에서 바로 활용할 수 있는 상황별 응대 자료를 이미지 중심으로 확인합니다.
-            </p>
+            <p class="home-card-desc">첫인사, 상담 흐름, 마무리 응대 등 현장에서 바로 활용할 수 있는 상황별 응대 자료를 확인합니다.</p>
           </div>
         </div>
 
@@ -583,9 +576,7 @@
           </div>
           <div class="home-card-body">
             <h2 class="home-card-title">상품자료</h2>
-            <p class="home-card-desc">
-              요금제, 결합, 부가서비스, 앱 활용법 등 고객에게 설명할 내용을 보기 쉽게 카드 형태로 정리합니다.
-            </p>
+            <p class="home-card-desc">요금제, 결합, 부가서비스, 앱 활용법 등 고객에게 설명할 내용을 카드 형태로 정리합니다.</p>
           </div>
         </div>
 
@@ -596,9 +587,7 @@
           </div>
           <div class="home-card-body">
             <h2 class="home-card-title">테스트</h2>
-            <p class="home-card-desc">
-              교육 후 점검이 필요한 내용들을 문제 형식 또는 이미지 자료 형식으로 넣어 신입 숙련도를 확인할 수 있습니다.
-            </p>
+            <p class="home-card-desc">교육 후 점검이 필요한 내용들을 이미지 자료와 함께 확인할 수 있습니다.</p>
           </div>
         </div>
       </div>
@@ -629,7 +618,7 @@
         <div id="sopContent" class="card-grid"></div>
 
         <div class="notice-box">
-          SOP 시트 열 이름은 category / title / description / image 로 맞추면 자동 반영돼.
+          image 칸에는 구글드라이브 링크, GitHub images 경로, 직접 이미지 주소를 넣을 수 있어.
         </div>
       </div>
     </section>
@@ -659,7 +648,7 @@
         <div id="productContent" class="card-grid"></div>
 
         <div class="notice-box">
-          상품자료 시트 이름은 현재 "상품자료"로 잡혀 있어.
+          예: images/test.jpg 또는 https://...jpg 또는 구글드라이브 공유링크
         </div>
       </div>
     </section>
@@ -689,7 +678,7 @@
         <div id="testContent" class="card-grid"></div>
 
         <div class="notice-box">
-          테스트 시트 이름은 현재 "테스트"로 잡혀 있어.
+          시트 열 이름은 category / title / description / image 로 맞추면 돼.
         </div>
       </div>
     </section>
@@ -698,7 +687,7 @@
   <div id="lightbox" class="lightbox" onclick="closeLightbox()">
     <div class="lightbox-inner" onclick="event.stopPropagation()">
       <button class="lightbox-close" onclick="closeLightbox()">×</button>
-      <img id="lightboxImage" src="" alt="확대 이미지" />
+      <img id="lightboxImage" src="" alt="확대 이미지" onerror="this.src='https://via.placeholder.com/1200x800/f3f4f6/334155?text=Image+Load+Failed'" />
     </div>
   </div>
 
@@ -710,6 +699,13 @@
       product: "상품자료",
       test: "테스트"
     };
+
+    /* 
+      GitHub Pages 절대주소를 쓰고 싶으면 아래처럼 넣어도 됨.
+      예:
+      const SITE_BASE_URL = "https://사용자이름.github.io/저장소이름/";
+    */
+    const SITE_BASE_URL = "";
 
     const appState = {
       sop: { raw: [], filtered: [], activeCategory: "전체" },
@@ -724,8 +720,8 @@
     }
 
     function openLightbox(src) {
-      if (!src) return;
-      document.getElementById("lightboxImage").src = src;
+      const target = src || "https://via.placeholder.com/1200x800/f3f4f6/334155?text=No+Image";
+      document.getElementById("lightboxImage").src = target;
       document.getElementById("lightbox").classList.add("active");
     }
 
@@ -751,9 +747,25 @@
       const value = normalizeText(url);
       if (!value) return "";
 
-      const googleDriveMatch = value.match(/\/file\/d\/([^/]+)\//) || value.match(/[?&]id=([^&]+)/);
-      if (googleDriveMatch) {
-        return `https://drive.google.com/thumbnail?id=${googleDriveMatch[1]}&sz=w1200`;
+      const driveFileMatch = value.match(/\/file\/d\/([^/]+)/);
+      if (driveFileMatch) {
+        return `https://drive.google.com/thumbnail?id=${driveFileMatch[1]}&sz=w1600`;
+      }
+
+      const driveOpenMatch = value.match(/[?&]id=([^&]+)/);
+      if (driveOpenMatch) {
+        return `https://drive.google.com/thumbnail?id=${driveOpenMatch[1]}&sz=w1600`;
+      }
+
+      if (/^https?:\/\//i.test(value)) {
+        return value;
+      }
+
+      if (value.startsWith("./") || value.startsWith("../") || value.startsWith("images/") || value.startsWith("/")) {
+        if (SITE_BASE_URL) {
+          return new URL(value, SITE_BASE_URL).href;
+        }
+        return value;
       }
 
       return value;
@@ -771,15 +783,13 @@
       const json = JSON.parse(jsonText);
       const cols = (json.table.cols || []).map(col => (col.label || "").trim());
 
-      const rows = (json.table.rows || []).map(row => {
+      return (json.table.rows || []).map(row => {
         const obj = {};
         (row.c || []).forEach((cell, index) => {
           obj[cols[index]] = cell ? cell.v : "";
         });
         return obj;
       });
-
-      return rows;
     }
 
     function normalizeRows(rows) {
@@ -862,7 +872,7 @@
         contentEl.innerHTML = `
           <div class="empty-state" style="grid-column: 1 / -1;">
             등록된 데이터가 없습니다.<br>
-            구글시트 열 이름이 <b>category / title / description / image</b> 로 되어 있는지 확인해줘.
+            구글시트 열 이름이 <b>category / title / description / image</b> 인지 확인해줘.
           </div>
         `;
         setCount(type, 0);
@@ -870,7 +880,8 @@
       }
 
       contentEl.innerHTML = data.map(item => {
-        const safeImage = escapeHtml(item.image || "https://via.placeholder.com/800x600/f3f4f6/334155?text=No+Image");
+        const rawImage = item.image || "";
+        const safeImage = rawImage || "https://via.placeholder.com/800x600/f3f4f6/334155?text=No+Image";
         const safeTitle = escapeHtml(item.title || "제목 없음");
         const safeCategory = escapeHtml(item.category || "기타");
         const safeDesc = escapeHtml(item.description || "설명이 없습니다.");
@@ -881,7 +892,7 @@
               <img
                 src="${safeImage}"
                 alt="${safeTitle}"
-                onerror="this.src='https://via.placeholder.com/800x600/f3f4f6/334155?text=No+Image'"
+                onerror="this.onerror=null; this.src='https://via.placeholder.com/800x600/f3f4f6/334155?text=No+Image';"
               >
               <div class="item-thumb-label">이미지 크게 보기</div>
             </div>
