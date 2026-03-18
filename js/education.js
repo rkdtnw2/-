@@ -75,14 +75,18 @@ async function loadSopData() {
       selectChapter(firstChapter);
     }
   } catch (e) {
-    document.getElementById("slide-content-area").innerHTML =
-      `<div class="empty-state">SOP 데이터를 불러오지 못했습니다.</div>`;
+    const area = document.getElementById("slide-content-area");
+    if (area) {
+      area.innerHTML = `<div class="empty-state">SOP 데이터를 불러오지 못했습니다.</div>`;
+    }
   }
 }
 
 function renderChapters() {
   const area = document.getElementById("chapter-list");
   const chapters = Object.keys(groupedData);
+
+  if (!area) return;
 
   area.innerHTML = chapters.map(chapter => `
     <button class="chapter-btn ${chapter === currentChapter ? "active" : ""}" onclick="selectChapter('${escapeJs(chapter)}')">
@@ -97,6 +101,8 @@ function selectChapter(chapter) {
 
   const topics = Object.keys(groupedData[chapter] || {});
   const area = document.getElementById("topic-list");
+
+  if (!area) return;
 
   area.innerHTML = topics.map(topic => `
     <button class="topic-btn ${topic === currentTopic ? "active" : ""}" onclick="selectTopic('${escapeJs(topic)}')">
@@ -126,6 +132,8 @@ function renderCurrentSlide() {
   const subtitleEl = document.getElementById("slide-subtitle");
   const area = document.getElementById("slide-content-area");
 
+  if (!titleEl || !subtitleEl || !area) return;
+
   if (!currentSlides.length) {
     titleEl.textContent = "슬라이드 없음";
     subtitleEl.textContent = "";
@@ -150,8 +158,12 @@ function renderCurrentSlide() {
 }
 
 function searchSlides() {
-  const keyword = document.getElementById("sop-search-input").value.trim().toLowerCase();
+  const input = document.getElementById("sop-search-input");
   const info = document.getElementById("search-result-info");
+
+  if (!input || !info) return;
+
+  const keyword = input.value.trim().toLowerCase();
 
   if (!keyword) {
     info.textContent = "검색어를 입력해주세요.";
@@ -190,8 +202,11 @@ function searchSlides() {
 }
 
 function moveToNextResult() {
+  const info = document.getElementById("search-result-info");
+  if (!info) return;
+
   if (!searchResults.length) {
-    document.getElementById("search-result-info").textContent = "먼저 검색해주세요.";
+    info.textContent = "먼저 검색해주세요.";
     return;
   }
 
@@ -201,6 +216,8 @@ function moveToNextResult() {
 
 function moveToSearchResult() {
   const info = document.getElementById("search-result-info");
+  if (!info) return;
+
   const result = searchResults[currentSearchIndex];
 
   currentChapter = result.chapter;
