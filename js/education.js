@@ -50,6 +50,10 @@ function escapeHtml(text) {
     .replace(/'/g, "&#039;");
 }
 
+function escapeJs(str) {
+  return String(str || "").replace(/'/g, "\\'");
+}
+
 async function loadSopData() {
   try {
     sopData = await fetchSopSheet();
@@ -100,7 +104,9 @@ function selectChapter(chapter) {
     </button>
   `).join("");
 
-  if (topics.length) selectTopic(topics[0]);
+  if (topics.length) {
+    selectTopic(topics[0]);
+  }
 }
 
 function selectTopic(topic) {
@@ -211,8 +217,4 @@ function moveToSearchResult() {
   renderCurrentSlide();
 
   info.textContent = `${currentSearchIndex + 1} / ${searchResults.length} · ${result.chapter} > ${result.topic}`;
-}
-
-function escapeJs(str) {
-  return String(str || "").replace(/'/g, "\\'");
 }
