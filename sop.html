@@ -7,38 +7,50 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div class="bg-orb orb1"></div>
-  <div class="bg-orb orb2"></div>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="brand">유림 텔레콤 현장대응 SOP</a>
 
-  <header class="sub-hero">
-    <div class="sub-hero-inner">
-      <a href="index.html" class="back-btn">← 홈으로</a>
-      <div class="hero-badge">SOP MANUAL</div>
-      <h1>SOP 매뉴얼</h1>
-      <p>챕터 → 주제 → 슬라이드 구조로 빠르게 찾고 바로 학습할 수 있습니다</p>
+      <nav class="topnav">
+        <a href="index.html">홈</a>
+        <a href="sop.html" class="active">SOP 매뉴얼</a>
+        <a href="index.html#edu-section">상품자료</a>
+        <a href="index.html#test-section">테스트</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="subhero">
+    <div class="container subhero-inner">
+      <div>
+        <div class="hero-label">SOP MANUAL</div>
+        <h1>SOP 매뉴얼</h1>
+        <p>챕터 → 주제 → 슬라이드 구조로 빠르게 찾고 바로 학습할 수 있습니다.</p>
+      </div>
 
       <div class="search-wrap">
         <input type="text" id="sop-search-input" placeholder="키워드 검색" />
         <button class="primary-btn" onclick="searchSlides()">검색</button>
         <button class="ghost-btn" onclick="moveToNextResult()">다음</button>
       </div>
+
       <div id="search-result-info" class="search-info"></div>
     </div>
-  </header>
+  </section>
 
   <main class="container sop-layout">
-    <aside class="sop-sidebar glass-panel">
+    <aside class="panel sidebar-panel">
       <h3>챕터</h3>
       <div id="chapter-list" class="chapter-list"></div>
     </aside>
 
     <section class="sop-main">
-      <div class="glass-panel topic-panel">
+      <div class="panel topic-panel">
         <h3>주제 목록</h3>
         <div id="topic-list" class="topic-list"></div>
       </div>
 
-      <div class="glass-panel slide-panel">
+      <div class="panel slide-panel">
         <div class="slide-head">
           <div>
             <h3 id="slide-title">슬라이드를 선택해주세요</h3>
