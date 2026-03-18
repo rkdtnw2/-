@@ -118,7 +118,6 @@
       font-size: 40px;
       line-height: 1.2;
       font-weight: 800;
-      letter-spacing: -0.02em;
     }
 
     .hero p {
@@ -618,7 +617,7 @@
         <div id="sopContent" class="card-grid"></div>
 
         <div class="notice-box">
-          image 칸에는 구글드라이브 링크, GitHub images 경로, 직접 이미지 주소를 넣을 수 있어.
+          image 칸에는 드라이브 공유링크, GitHub images 경로, 직접 이미지 주소를 넣을 수 있어.
         </div>
       </div>
     </section>
@@ -648,7 +647,7 @@
         <div id="productContent" class="card-grid"></div>
 
         <div class="notice-box">
-          예: images/test.jpg 또는 https://...jpg 또는 구글드라이브 공유링크
+          드라이브 링크는 공개 권한이 있어야 하고, 안 뜨면 GitHub images 방식이 더 안정적이야.
         </div>
       </div>
     </section>
@@ -687,7 +686,7 @@
   <div id="lightbox" class="lightbox" onclick="closeLightbox()">
     <div class="lightbox-inner" onclick="event.stopPropagation()">
       <button class="lightbox-close" onclick="closeLightbox()">×</button>
-      <img id="lightboxImage" src="" alt="확대 이미지" onerror="this.src='https://via.placeholder.com/1200x800/f3f4f6/334155?text=Image+Load+Failed'" />
+      <img id="lightboxImage" src="" alt="확대 이미지" />
     </div>
   </div>
 
@@ -700,12 +699,9 @@
       test: "테스트"
     };
 
-    /* 
-      GitHub Pages 절대주소를 쓰고 싶으면 아래처럼 넣어도 됨.
-      예:
-      const SITE_BASE_URL = "https://사용자이름.github.io/저장소이름/";
-    */
     const SITE_BASE_URL = "";
+
+    const PLACEHOLDER_IMAGE = "https://via.placeholder.com/1200x800/f3f4f6/334155?text=No+Image";
 
     const appState = {
       sop: { raw: [], filtered: [], activeCategory: "전체" },
@@ -720,8 +716,12 @@
     }
 
     function openLightbox(src) {
-      const target = src || "https://via.placeholder.com/1200x800/f3f4f6/334155?text=No+Image";
-      document.getElementById("lightboxImage").src = target;
+      const img = document.getElementById("lightboxImage");
+      img.onerror = function () {
+        this.onerror = null;
+        this.src = PLACEHOLDER_IMAGE;
+      };
+      img.src = src || PLACEHOLDER_IMAGE;
       document.getElementById("lightbox").classList.add("active");
     }
 
@@ -743,18 +743,40 @@
       return String(value ?? "").trim();
     }
 
+    function extractGoogleDriveFileId(url) {
+      const value = normalizeText(url);
+      if (!value) return "";
+
+      const patterns = [
+        /\/file\/d\/([^/]+)/,
+        /[?&]id=([^&]+)/,
+        /\/thumbnail\?id=([^&]+)/,
+        /\/uc\?[^#]*id=([^&]+)/
+      ];
+
+      for (const pattern of patterns) {
+        const match = value.match(pattern);
+        if (match && match[1]) return match[1];
+      }
+
+      return "";
+    }
+
+    function buildGoogleDriveCandidates(fileId) {
+      return [
+        `https://drive.google.com/thumbnail?id=${fileId}&sz=w1600`,
+        `https://drive.google.com/uc?export=view&id=${fileId}`,
+        `https://lh3.googleusercontent.com/d/${fileId}=w1600`
+      ];
+    }
+
     function normalizeImageUrl(url) {
       const value = normalizeText(url);
       if (!value) return "";
 
-      const driveFileMatch = value.match(/\/file\/d\/([^/]+)/);
-      if (driveFileMatch) {
-        return `https://drive.google.com/thumbnail?id=${driveFileMatch[1]}&sz=w1600`;
-      }
-
-      const driveOpenMatch = value.match(/[?&]id=([^&]+)/);
-      if (driveOpenMatch) {
-        return `https://drive.google.com/thumbnail?id=${driveOpenMatch[1]}&sz=w1600`;
+      const driveFileId = extractGoogleDriveFileId(value);
+      if (driveFileId) {
+        return buildGoogleDriveCandidates(driveFileId)[0];
       }
 
       if (/^https?:\/\//i.test(value)) {
@@ -769,6 +791,18 @@
       }
 
       return value;
+    }
+
+    function getFallbackImages(originalUrl) {
+      const value = normalizeText(originalUrl);
+      const driveFileId = extractGoogleDriveFileId(value);
+
+      if (driveFileId) {
+        return buildGoogleDriveCandidates(driveFileId);
+      }
+
+      const normalized = normalizeImageUrl(value);
+      return normalized ? [normalized] : [PLACEHOLDER_IMAGE];
     }
 
     function getSheetUrl(sheetName) {
@@ -794,13 +828,17 @@
 
     function normalizeRows(rows) {
       return rows
-        .map(row => ({
-          category: normalizeText(row.category || row.Category || row.CATEGORY || "기타"),
-          title: normalizeText(row.title || row.Title || row.TITLE || ""),
-          description: normalizeText(row.description || row.Description || row.DESCRIPTION || ""),
-          image: normalizeImageUrl(row.image || row.Image || row.IMAGE || "")
-        }))
-        .filter(item => item.title || item.description || item.image);
+        .map(row => {
+          const rawImage = normalizeText(row.image || row.Image || row.IMAGE || "");
+          return {
+            category: normalizeText(row.category || row.Category || row.CATEGORY || "기타"),
+            title: normalizeText(row.title || row.Title || row.TITLE || ""),
+            description: normalizeText(row.description || row.Description || row.DESCRIPTION || ""),
+            image: normalizeImageUrl(rawImage),
+            originalImage: rawImage
+          };
+        })
+        .filter(item => item.title || item.description || item.image || item.originalImage);
     }
 
     function setStatus(type, text) {
@@ -879,20 +917,21 @@
         return;
       }
 
-      contentEl.innerHTML = data.map(item => {
-        const rawImage = item.image || "";
-        const safeImage = rawImage || "https://via.placeholder.com/800x600/f3f4f6/334155?text=No+Image";
+      contentEl.innerHTML = data.map((item, index) => {
+        const imageCandidates = getFallbackImages(item.originalImage || item.image);
+        const firstImage = imageCandidates[0] || PLACEHOLDER_IMAGE;
         const safeTitle = escapeHtml(item.title || "제목 없음");
         const safeCategory = escapeHtml(item.category || "기타");
         const safeDesc = escapeHtml(item.description || "설명이 없습니다.");
+        const candidatesJson = escapeHtml(JSON.stringify(imageCandidates));
 
         return `
           <div class="item-card">
-            <div class="item-thumb" data-image="${safeImage}">
+            <div class="item-thumb" data-image="${escapeHtml(firstImage)}" data-candidates="${candidatesJson}">
               <img
-                src="${safeImage}"
+                id="${type}-img-${index}"
+                src="${escapeHtml(firstImage)}"
                 alt="${safeTitle}"
-                onerror="this.onerror=null; this.src='https://via.placeholder.com/800x600/f3f4f6/334155?text=No+Image';"
               >
               <div class="item-thumb-label">이미지 크게 보기</div>
             </div>
@@ -906,8 +945,29 @@
       }).join("");
 
       contentEl.querySelectorAll(".item-thumb").forEach(thumb => {
+        const img = thumb.querySelector("img");
+        let candidates = [];
+
+        try {
+          candidates = JSON.parse(thumb.dataset.candidates || "[]");
+        } catch (e) {
+          candidates = [];
+        }
+
+        let candidateIndex = 0;
+
+        img.onerror = function () {
+          candidateIndex += 1;
+          if (candidateIndex < candidates.length) {
+            this.src = candidates[candidateIndex];
+          } else {
+            this.onerror = null;
+            this.src = PLACEHOLDER_IMAGE;
+          }
+        };
+
         thumb.addEventListener("click", () => {
-          openLightbox(thumb.dataset.image);
+          openLightbox(img.currentSrc || img.src || thumb.dataset.image || PLACEHOLDER_IMAGE);
         });
       });
 
