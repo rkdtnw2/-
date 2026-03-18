@@ -47,8 +47,12 @@ function startTest() {
   }
 
   const section = document.getElementById("test-section");
+  const topbar = document.querySelector(".topbar");
+  const topbarHeight = topbar ? topbar.offsetHeight : 82;
+
   if (section) {
-    section.scrollIntoView({ behavior: "smooth", block: "start" });
+    const y = section.getBoundingClientRect().top + window.pageYOffset - topbarHeight - 14;
+    window.scrollTo({ top: y, behavior: "smooth" });
   }
 }
 
