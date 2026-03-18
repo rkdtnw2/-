@@ -42,11 +42,14 @@ function renderTest(data) {
 
 function startTest() {
   const resultArea = document.getElementById("test-result-area");
-  if (resultArea) resultArea.innerHTML = `<strong>시험이 시작되었습니다.</strong><br>모든 문제를 확인한 뒤 제출해주세요.`;
-  window.scrollTo({
-    top: document.getElementById("test-section").offsetTop - 20,
-    behavior: "smooth"
-  });
+  if (resultArea) {
+    resultArea.innerHTML = `<strong>시험이 시작되었습니다.</strong><br>모든 문제를 확인한 뒤 제출해주세요.`;
+  }
+
+  const section = document.getElementById("test-section");
+  if (section) {
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 
 function submitTest() {
