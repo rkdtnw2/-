@@ -9,7 +9,10 @@
 <body>
   <header class="topbar">
     <div class="topbar-inner">
-      <a href="index.html" class="brand">유림 텔레콤 현장대응 SOP</a>
+      <a href="index.html" class="brand">
+        <span class="brand-logo-box">유</span>
+        <span class="brand-text">유림 텔레콤 현장대응 SOP</span>
+      </a>
 
       <nav class="topnav">
         <a href="index.html">홈</a>
@@ -20,45 +23,50 @@
     </div>
   </header>
 
-  <section class="subhero">
-    <div class="container subhero-inner">
-      <div>
-        <div class="hero-label">SOP MANUAL</div>
-        <h1>SOP 매뉴얼</h1>
-        <p>챕터 → 주제 → 슬라이드 구조로 빠르게 찾고 바로 학습할 수 있습니다.</p>
-      </div>
+  <main class="page-main">
+    <section class="subhero">
+      <div class="subhero-bg-shape subhero-bg-1"></div>
+      <div class="subhero-bg-shape subhero-bg-2"></div>
 
-      <div class="search-wrap">
-        <input type="text" id="sop-search-input" placeholder="키워드 검색" />
-        <button class="primary-btn" onclick="searchSlides()">검색</button>
-        <button class="ghost-btn" onclick="moveToNextResult()">다음</button>
-      </div>
-
-      <div id="search-result-info" class="search-info"></div>
-    </div>
-  </section>
-
-  <main class="container sop-layout">
-    <aside class="panel sidebar-panel">
-      <h3>챕터</h3>
-      <div id="chapter-list" class="chapter-list"></div>
-    </aside>
-
-    <section class="sop-main">
-      <div class="panel topic-panel">
-        <h3>주제 목록</h3>
-        <div id="topic-list" class="topic-list"></div>
-      </div>
-
-      <div class="panel slide-panel">
-        <div class="slide-head">
-          <div>
-            <h3 id="slide-title">슬라이드를 선택해주세요</h3>
-            <p id="slide-subtitle" class="section-sub"></p>
-          </div>
+      <div class="container subhero-inner">
+        <div class="fade-up">
+          <div class="hero-label">SOP MANUAL</div>
+          <h1>SOP 매뉴얼</h1>
+          <p>챕터 → 주제 → 슬라이드 구조로 빠르게 찾고 바로 학습할 수 있습니다.</p>
         </div>
-        <div id="slide-content-area"></div>
+
+        <div class="search-wrap fade-up delay-1">
+          <input type="text" id="sop-search-input" placeholder="키워드 검색" />
+          <button class="primary-btn" onclick="searchSlides()">검색</button>
+          <button class="ghost-btn" onclick="moveToNextResult()">다음</button>
+        </div>
+
+        <div id="search-result-info" class="search-info fade-up delay-2"></div>
       </div>
+    </section>
+
+    <section class="container sop-layout">
+      <aside class="panel sidebar-panel fade-up">
+        <h3>챕터</h3>
+        <div id="chapter-list" class="chapter-list"></div>
+      </aside>
+
+      <section class="sop-main">
+        <div class="panel topic-panel fade-up delay-1">
+          <h3>주제 목록</h3>
+          <div id="topic-list" class="topic-list"></div>
+        </div>
+
+        <div class="panel slide-panel fade-up delay-2">
+          <div class="slide-head">
+            <div>
+              <h3 id="slide-title">슬라이드를 선택해주세요</h3>
+              <p id="slide-subtitle" class="section-sub"></p>
+            </div>
+          </div>
+          <div id="slide-content-area"></div>
+        </div>
+      </section>
     </section>
   </main>
 
