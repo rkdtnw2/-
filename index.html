@@ -497,13 +497,6 @@
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
     }
 
-    .loading {
-      padding: 30px 18px;
-      text-align: center;
-      color: var(--sub);
-      font-size: 15px;
-    }
-
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -559,7 +552,6 @@
 </head>
 <body>
   <div class="container">
-    <!-- HOME -->
     <section id="homePage" class="page active">
       <div class="hero">
         <div class="hero-badge">YURIM TELECOM · 현장 교육 가이드</div>
@@ -612,7 +604,6 @@
       </div>
     </section>
 
-    <!-- SOP -->
     <section id="sopPage" class="page">
       <div class="section-head">
         <div>
@@ -638,12 +629,11 @@
         <div id="sopContent" class="card-grid"></div>
 
         <div class="notice-box">
-          SOP 시트에 <b>category / title / description / image</b> 열을 만들고 데이터를 넣으면 자동 반영됩니다.
+          SOP 시트 열 이름은 category / title / description / image 로 맞추면 자동 반영돼.
         </div>
       </div>
     </section>
 
-    <!-- PRODUCT -->
     <section id="productPage" class="page">
       <div class="section-head">
         <div>
@@ -669,12 +659,11 @@
         <div id="productContent" class="card-grid"></div>
 
         <div class="notice-box">
-          PRODUCT 시트에 데이터를 추가하면 홈페이지 카드가 자동으로 늘어납니다.
+          상품자료 시트 이름은 현재 "상품자료"로 잡혀 있어.
         </div>
       </div>
     </section>
 
-    <!-- TEST -->
     <section id="testPage" class="page">
       <div class="section-head">
         <div>
@@ -700,13 +689,12 @@
         <div id="testContent" class="card-grid"></div>
 
         <div class="notice-box">
-          TEST 시트에 테스트 제목, 설명, 이미지 주소를 넣으면 자동으로 카드에 표시됩니다.
+          테스트 시트 이름은 현재 "테스트"로 잡혀 있어.
         </div>
       </div>
     </section>
   </div>
 
-  <!-- LIGHTBOX -->
   <div id="lightbox" class="lightbox" onclick="closeLightbox()">
     <div class="lightbox-inner" onclick="event.stopPropagation()">
       <button class="lightbox-close" onclick="closeLightbox()">×</button>
@@ -715,55 +703,26 @@
   </div>
 
   <script>
-    /****************************************************************
-     * 1) 여기에 네 구글시트 ID만 넣으면 됨
-     * 예:
-     * https://docs.google.com/spreadsheets/d/여기시트ID/edit#gid=0
-     ****************************************************************/
-    const SHEET_ID = "여기에_구글시트_ID_넣기";
+    const SHEET_ID = "1irp_D1Sd8b1CJees0iO6iIzw_92BX3v70mW4e2MCQzw";
 
-    /****************************************************************
-     * 2) 시트 이름
-     ****************************************************************/
     const SHEET_NAMES = {
-      sop: "SOP",
-      product: "PRODUCT",
-      test: "TEST"
+      sop: "sop",
+      product: "상품자료",
+      test: "테스트"
     };
 
-    /****************************************************************
-     * 3) 상태 데이터
-     ****************************************************************/
     const appState = {
-      sop: {
-        raw: [],
-        filtered: [],
-        activeCategory: "전체"
-      },
-      product: {
-        raw: [],
-        filtered: [],
-        activeCategory: "전체"
-      },
-      test: {
-        raw: [],
-        filtered: [],
-        activeCategory: "전체"
-      }
+      sop: { raw: [], filtered: [], activeCategory: "전체" },
+      product: { raw: [], filtered: [], activeCategory: "전체" },
+      test: { raw: [], filtered: [], activeCategory: "전체" }
     };
 
-    /****************************************************************
-     * 4) 페이지 전환
-     ****************************************************************/
     function showPage(pageId) {
       document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
       document.getElementById(pageId).classList.add("active");
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    /****************************************************************
-     * 5) 이미지 크게 보기
-     ****************************************************************/
     function openLightbox(src) {
       if (!src) return;
       document.getElementById("lightboxImage").src = src;
@@ -775,9 +734,6 @@
       document.getElementById("lightboxImage").src = "";
     }
 
-    /****************************************************************
-     * 6) 유틸
-     ****************************************************************/
     function escapeHtml(value) {
       return String(value ?? "")
         .replace(/&/g, "&amp;")
@@ -791,6 +747,18 @@
       return String(value ?? "").trim();
     }
 
+    function normalizeImageUrl(url) {
+      const value = normalizeText(url);
+      if (!value) return "";
+
+      const googleDriveMatch = value.match(/\/file\/d\/([^/]+)\//) || value.match(/[?&]id=([^&]+)/);
+      if (googleDriveMatch) {
+        return `https://drive.google.com/thumbnail?id=${googleDriveMatch[1]}&sz=w1200`;
+      }
+
+      return value;
+    }
+
     function getSheetUrl(sheetName) {
       return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&tqx=out:json`;
     }
@@ -799,8 +767,10 @@
       const jsonText = text
         .replace(/^[\s\S]*?setResponse\(/, "")
         .replace(/\);\s*$/, "");
+
       const json = JSON.parse(jsonText);
       const cols = (json.table.cols || []).map(col => (col.label || "").trim());
+
       const rows = (json.table.rows || []).map(row => {
         const obj = {};
         (row.c || []).forEach((cell, index) => {
@@ -808,6 +778,7 @@
         });
         return obj;
       });
+
       return rows;
     }
 
@@ -817,7 +788,7 @@
           category: normalizeText(row.category || row.Category || row.CATEGORY || "기타"),
           title: normalizeText(row.title || row.Title || row.TITLE || ""),
           description: normalizeText(row.description || row.Description || row.DESCRIPTION || ""),
-          image: normalizeText(row.image || row.Image || row.IMAGE || "")
+          image: normalizeImageUrl(row.image || row.Image || row.IMAGE || "")
         }))
         .filter(item => item.title || item.description || item.image);
     }
@@ -836,9 +807,6 @@
       return ["전체", ...new Set(data.map(item => item.category).filter(Boolean))];
     }
 
-    /****************************************************************
-     * 7) 시트 불러오기
-     ****************************************************************/
     async function loadSheet(type, sheetName) {
       try {
         setStatus(type, "불러오는 중");
@@ -866,9 +834,6 @@
       }
     }
 
-    /****************************************************************
-     * 8) 탭 렌더링
-     ****************************************************************/
     function renderTabs(type) {
       const tabsEl = document.getElementById(`${type}Tabs`);
       const categories = uniqueCategories(appState[type].raw);
@@ -876,7 +841,6 @@
       tabsEl.innerHTML = categories.map(category => `
         <button
           class="tab-btn ${category === appState[type].activeCategory ? "active" : ""}"
-          data-type="${type}"
           data-category="${escapeHtml(category)}"
         >
           ${escapeHtml(category)}
@@ -891,9 +855,6 @@
       });
     }
 
-    /****************************************************************
-     * 9) 카드 렌더링
-     ****************************************************************/
     function renderContent(type, data) {
       const contentEl = document.getElementById(`${type}Content`);
 
@@ -901,37 +862,47 @@
         contentEl.innerHTML = `
           <div class="empty-state" style="grid-column: 1 / -1;">
             등록된 데이터가 없습니다.<br>
-            구글시트 열 이름이 <b>category / title / description / image</b> 로 되어있는지 확인해줘.
+            구글시트 열 이름이 <b>category / title / description / image</b> 로 되어 있는지 확인해줘.
           </div>
         `;
         setCount(type, 0);
         return;
       }
 
-      contentEl.innerHTML = data.map(item => `
-        <div class="item-card">
-          <div class="item-thumb" onclick="openLightbox('${escapeHtml(item.image)}')">
-            <img
-              src="${escapeHtml(item.image || "https://via.placeholder.com/800x600/f3f4f6/334155?text=No+Image")}"
-              alt="${escapeHtml(item.title || "이미지")}"
-              onerror="this.src='https://via.placeholder.com/800x600/f3f4f6/334155?text=No+Image'"
-            >
-            <div class="item-thumb-label">이미지 크게 보기</div>
+      contentEl.innerHTML = data.map(item => {
+        const safeImage = escapeHtml(item.image || "https://via.placeholder.com/800x600/f3f4f6/334155?text=No+Image");
+        const safeTitle = escapeHtml(item.title || "제목 없음");
+        const safeCategory = escapeHtml(item.category || "기타");
+        const safeDesc = escapeHtml(item.description || "설명이 없습니다.");
+
+        return `
+          <div class="item-card">
+            <div class="item-thumb" data-image="${safeImage}">
+              <img
+                src="${safeImage}"
+                alt="${safeTitle}"
+                onerror="this.src='https://via.placeholder.com/800x600/f3f4f6/334155?text=No+Image'"
+              >
+              <div class="item-thumb-label">이미지 크게 보기</div>
+            </div>
+            <div class="item-body">
+              <div class="item-category">${safeCategory}</div>
+              <h3 class="item-title">${safeTitle}</h3>
+              <p class="item-desc">${safeDesc}</p>
+            </div>
           </div>
-          <div class="item-body">
-            <div class="item-category">${escapeHtml(item.category || "기타")}</div>
-            <h3 class="item-title">${escapeHtml(item.title || "제목 없음")}</h3>
-            <p class="item-desc">${escapeHtml(item.description || "설명이 없습니다.")}</p>
-          </div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
+
+      contentEl.querySelectorAll(".item-thumb").forEach(thumb => {
+        thumb.addEventListener("click", () => {
+          openLightbox(thumb.dataset.image);
+        });
+      });
 
       setCount(type, data.length);
     }
 
-    /****************************************************************
-     * 10) 검색 + 카테고리 필터
-     ****************************************************************/
     function applyFilters(type) {
       const searchInput = document.getElementById(`${type}Search`);
       const keyword = normalizeText(searchInput.value).toLowerCase();
@@ -945,11 +916,7 @@
 
       if (keyword) {
         result = result.filter(item => {
-          const text = [
-            item.category,
-            item.title,
-            item.description
-          ].join(" ").toLowerCase();
+          const text = [item.category, item.title, item.description].join(" ").toLowerCase();
           return text.includes(keyword);
         });
       }
@@ -959,30 +926,15 @@
       renderContent(type, result);
     }
 
-    /****************************************************************
-     * 11) 검색 이벤트 연결
-     ****************************************************************/
     function bindSearch(type) {
       const input = document.getElementById(`${type}Search`);
       input.addEventListener("input", () => applyFilters(type));
     }
 
-    /****************************************************************
-     * 12) 초기화
-     ****************************************************************/
     async function init() {
       bindSearch("sop");
       bindSearch("product");
       bindSearch("test");
-
-      if (!SHEET_ID || SHEET_ID === "여기에_구글시트_ID_넣기") {
-        ["sop", "product", "test"].forEach(type => {
-          setStatus(type, "시트 ID 필요");
-          renderTabs(type);
-          renderContent(type, []);
-        });
-        return;
-      }
 
       await Promise.all([
         loadSheet("sop", SHEET_NAMES.sop),
