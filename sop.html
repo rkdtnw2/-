@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOP 매뉴얼 | 유림 텔레콤 현장대응 SOP</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+
+  <header class="sub-hero">
+    <div class="sub-hero-inner">
+      <a href="index.html" class="back-btn">← 홈으로</a>
+      <div class="hero-badge">SOP MANUAL</div>
+      <h1>SOP 매뉴얼</h1>
+      <p>챕터 → 주제 → 슬라이드 구조로 빠르게 찾고 바로 학습할 수 있습니다</p>
+
+      <div class="search-wrap">
+        <input type="text" id="sop-search-input" placeholder="키워드 검색" />
+        <button class="primary-btn" onclick="searchSlides()">검색</button>
+        <button class="ghost-btn" onclick="moveToNextResult()">다음</button>
+      </div>
+      <div id="search-result-info" class="search-info"></div>
+    </div>
+  </header>
+
+  <main class="container sop-layout">
+    <aside class="sop-sidebar glass-panel">
+      <h3>챕터</h3>
+      <div id="chapter-list" class="chapter-list"></div>
+    </aside>
+
+    <section class="sop-main">
+      <div class="glass-panel topic-panel">
+        <h3>주제 목록</h3>
+        <div id="topic-list" class="topic-list"></div>
+      </div>
+
+      <div class="glass-panel slide-panel">
+        <div class="slide-head">
+          <div>
+            <h3 id="slide-title">슬라이드를 선택해주세요</h3>
+            <p id="slide-subtitle" class="section-sub"></p>
+          </div>
+        </div>
+        <div id="slide-content-area"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/education.js"></script>
+</body>
+</html>
