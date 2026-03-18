@@ -7,58 +7,136 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div class="bg-orb orb1"></div>
-  <div class="bg-orb orb2"></div>
-  <div class="bg-orb orb3"></div>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="brand">
+        <span class="brand-logo-box">유</span>
+        <span class="brand-text">유림 텔레콤 현장대응 SOP</span>
+      </a>
 
-  <header class="hero">
-    <div class="hero-inner">
-      <div class="hero-badge">YURIM TELECOM</div>
-      <h1>유림 텔레콤 현장대응 SOP</h1>
-      <p>
-        신입 직원이 빠르게 이해하고 바로 활용할 수 있도록<br />
-        SOP 매뉴얼 · 상품자료 · 테스트를 한 곳에 정리한 교육 페이지
-      </p>
+      <nav class="topnav">
+        <a href="index.html" class="active">홈</a>
+        <a href="sop.html">SOP 매뉴얼</a>
+        <a href="#edu-section" onclick="showSection('edu-section')">상품자료</a>
+        <a href="#test-section" onclick="showSection('test-section')">테스트</a>
+      </nav>
     </div>
   </header>
 
-  <main class="container">
-    <section class="menu-grid">
-      <a class="menu-card premium-card" href="sop.html">
-        <div class="menu-icon">📘</div>
-        <h2>SOP 매뉴얼</h2>
-        <p>상황별 응대 흐름과 현장 대응 SOP를 단계별로 확인</p>
-      </a>
+  <main class="page-main">
+    <section class="hero-section">
+      <div class="hero-bg-shape hero-bg-1"></div>
+      <div class="hero-bg-shape hero-bg-2"></div>
 
-      <button class="menu-card premium-card" onclick="showSection('edu-section')">
-        <div class="menu-icon">🗂️</div>
-        <h2>상품자료</h2>
-        <p>구글시트와 연동된 상품/요금/부가서비스 자료 확인</p>
-      </button>
+      <div class="container hero-content">
+        <div class="hero-text fade-up">
+          <div class="hero-label">YURIM TELECOM SOP</div>
+          <h1>
+            신입 직원이<br />
+            빠르게 이해하는<br />
+            현장 대응 매뉴얼
+          </h1>
+          <p>
+            SOP 매뉴얼, 상품자료, 테스트를 한 화면에 정리해
+            신입 직원이 현장에서 바로 활용할 수 있도록 구성한
+            유림 텔레콤 교육 홈페이지입니다.
+          </p>
 
-      <button class="menu-card premium-card" onclick="showSection('test-section')">
-        <div class="menu-icon">📝</div>
-        <h2>테스트</h2>
-        <p>교육 내용을 바탕으로 문제를 풀고 결과를 확인</p>
-      </button>
+          <div class="hero-buttons">
+            <a href="sop.html" class="primary-btn">SOP 바로가기</a>
+            <button class="ghost-btn" onclick="showSection('edu-section')">상품자료 보기</button>
+          </div>
+        </div>
+
+        <div class="hero-visual fade-up delay-1">
+          <div class="hero-glass-card floating-card">
+            <div class="hero-card-top">
+              <span class="hero-card-badge">실전 교육용</span>
+              <span class="hero-card-dot"></span>
+            </div>
+
+            <h3>유림 텔레콤 현장대응 SOP</h3>
+            <p>
+              현장 응대 흐름, 상품자료, 테스트를
+              한 번에 관리할 수 있도록 정리된
+              실전형 교육 페이지입니다.
+            </p>
+
+            <div class="hero-mini-grid">
+              <div class="hero-mini-item">
+                <strong>SOP</strong>
+                <span>상황별 응대</span>
+              </div>
+              <div class="hero-mini-item">
+                <strong>상품</strong>
+                <span>자료 확인</span>
+              </div>
+              <div class="hero-mini-item">
+                <strong>TEST</strong>
+                <span>이해도 점검</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-side-card floating-card delay-float">
+            <div class="hero-side-title">교육 진행 흐름</div>
+            <ul>
+              <li>기본 응대 확인</li>
+              <li>상황별 SOP 숙지</li>
+              <li>상품자료 학습</li>
+              <li>테스트 응시</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section id="edu-section" class="content-section hidden">
+    <section class="container menu-section">
+      <div class="section-head fade-up">
+        <h2>빠른 메뉴</h2>
+        <p>필요한 메뉴로 바로 이동해 실무 교육 흐름을 빠르게 이어갈 수 있습니다.</p>
+      </div>
+
+      <div class="menu-grid">
+        <a class="menu-card fade-up" href="sop.html">
+          <div class="menu-icon">📘</div>
+          <h3>SOP 매뉴얼</h3>
+          <p>상황별 응대 흐름과 업무별 현장 대응 절차를 확인합니다.</p>
+          <span class="menu-link">바로 이동</span>
+        </a>
+
+        <button class="menu-card fade-up delay-1" onclick="showSection('edu-section')">
+          <div class="menu-icon">🗂️</div>
+          <h3>상품자료</h3>
+          <p>구글시트에 등록한 상품자료와 이미지를 카드형으로 확인합니다.</p>
+          <span class="menu-link">자료 보기</span>
+        </button>
+
+        <button class="menu-card fade-up delay-2" onclick="showSection('test-section')">
+          <div class="menu-icon">📝</div>
+          <h3>테스트</h3>
+          <p>교육 내용을 바탕으로 문제를 풀고 결과를 확인할 수 있습니다.</p>
+          <span class="menu-link">응시하기</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="edu-section" class="container content-section hidden reveal-section">
       <div class="section-top">
         <div>
           <h3>상품자료</h3>
-          <p class="section-sub">카테고리별 카드 형태로 정리된 상품자료</p>
+          <p class="section-sub">카테고리별 카드 형태로 정리된 상품자료입니다.</p>
         </div>
         <div class="badge" id="edu-count-badge">0개 항목</div>
       </div>
       <div id="edu-content-area" class="edu-grid"></div>
     </section>
 
-    <section id="test-section" class="content-section hidden">
+    <section id="test-section" class="container content-section hidden reveal-section">
       <div class="section-top">
         <div>
           <h3>테스트</h3>
-          <p class="section-sub">응시 후 점수와 오답을 확인할 수 있습니다</p>
+          <p class="section-sub">문제를 풀고 점수와 오답을 확인할 수 있습니다.</p>
         </div>
         <div class="badge" id="test-count-badge">0문항</div>
       </div>
