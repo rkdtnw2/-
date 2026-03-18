@@ -13,13 +13,28 @@ let dynamicTestAnswerKey = {};
 document.addEventListener("DOMContentLoaded", async () => {
   await loadEducationData();
   await loadTestData();
+
+  if (window.location.hash === "#edu-section") {
+    showSection("edu-section");
+  } else if (window.location.hash === "#test-section") {
+    showSection("test-section");
+  }
 });
 
 function showSection(sectionId) {
-  document.getElementById("edu-section").classList.add("hidden");
-  document.getElementById("test-section").classList.add("hidden");
-  document.getElementById(sectionId).classList.remove("hidden");
-  window.scrollTo({ top: document.getElementById(sectionId).offsetTop - 20, behavior: "smooth" });
+  const edu = document.getElementById("edu-section");
+  const test = document.getElementById("test-section");
+
+  if (edu) edu.classList.add("hidden");
+  if (test) test.classList.add("hidden");
+
+  const target = document.getElementById(sectionId);
+  if (target) {
+    target.classList.remove("hidden");
+    setTimeout(() => {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  }
 }
 
 async function fetchSheetAsJson(gid) {
@@ -70,6 +85,8 @@ async function loadEducationData() {
 function renderEdu(data) {
   const area = document.getElementById("edu-content-area");
   const badge = document.getElementById("edu-count-badge");
+
+  if (!area || !badge) return;
 
   if (!data.length) {
     badge.textContent = "0개 항목";
